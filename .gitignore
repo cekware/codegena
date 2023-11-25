@@ -9,4 +9,4 @@ __pycache__
 .DS_Store
 env.sh
 migrations
-project/server/app.db
+project/server/db/app.db

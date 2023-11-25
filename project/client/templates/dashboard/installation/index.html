@@ -1,0 +1,16 @@
+{% extends "_base.html" %}
+{% from 'bootstrap4/nav.html' import render_breadcrumb_item %}
+{% from 'bootstrap4/table.html' import render_table %}
+
+{% block nav%}
+{{ render_breadcrumb_item('installation.index', 'Installations') }}
+{% endblock %}
+
+{% block content %}
+<div>
+    {{ render_table(data, titles, show_actions=True, model=model, table_classes="table table-striped",
+        view_url=('installation.installation', [('installation_id', ":id")]),
+        ) }}
+   
+</div>
+{% endblock %}

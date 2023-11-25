@@ -1,0 +1,36 @@
+{{ module.swift().imports }}
+public struct {{ module.name }}: Reducer {
+
+    public init() {}
+
+    public struct State: Equatable {
+        {% for state in module.swift().states %}{{ state }}
+        {% endfor %}
+        
+        {{ module.swift().initializer }}
+        
+    }
+
+    public enum Action: Equatable {
+        {% for action in module.swift().actions %}case {{ action }}
+        {% endfor %}
+    }
+
+    public var body: some ReducerOf<Self> {
+        Reduce { state, action in
+            switch action {
+            {% for action in module.swift().actions %}
+                case .{{ action.name }}{{ action.parameters_let_case }}:
+                    return self.{{ action.name }}{{ action.parameters_func_call }}
+            {% endfor %}
+            }
+        }
+        {% for submodule in module.swift().submodules %}{{ submodule.scope }}
+        {% endfor %}
+    }
+
+    {% for action in module.swift().actions %}{{ action.function_definition }} {
+        return .none
+    }
+    {% endfor %}
+}

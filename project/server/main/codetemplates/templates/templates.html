@@ -1,0 +1,69 @@
+{% extends "_base.html" %}
+{% from 'bootstrap4/nav.html' import render_breadcrumb_item %}
+{% from 'bootstrap4/table.html' import render_table %}
+
+{% block nav%}
+{{ render_breadcrumb_item('project.index',"Projects") }}
+{{ render_breadcrumb_item('project.project',project.name, id=project.id) }}
+{{ render_breadcrumb_item('codetemplate.index', "Templates", project_id=project.id) }}
+{% if current_user.is_anonymous %}
+<li class="" style="margin-left: auto; margin-right:0;"><a href="{{ url_for('main.registro') }}">Logout</a></a>
+{% else %}
+<li class="" style="margin-left: auto; margin-right:0;"><a href="{{ url_for('main.logout') }}">Logout</a></a>
+{% endif %}
+{% endblock %}
+{% block content %}
+<div>
+  <ul class="nav nav-tabs">
+      <li class="nav-item">
+        <a class="nav-link" href="{{ url_for('module.index', project_id=project.id) }}">Modules</a>
+      </li>
+      <li class="nav-item">
+          <a class="nav-link active" href="{{ url_for('codetemplate.index', project_id=project.id) }}">Templates</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="{{ url_for('project.project', id=project.id) }}">Info</a>
+      </li>
+    </ul>
+  <div>
+
+<div>
+  <table class="table table table-hover">
+      <thead>
+        <tr>
+          <th scope="col"><a class="" href="{{ url_for('codetemplate.add', project_id=project.id) }}"><i class="fa-sharp fa-regular fa-plus p-2"></i></a></th>
+          <th scope="col">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+          {% for template in data %}
+          <tr>
+              {% if form != None and template.id == selected_template.id %}
+              <th scope="row">
+                  <form id="template_form" method="post">
+                      {% if 'csrf_token' in form %}
+                      {{ form.csrf_token() }}
+                      {% endif %}
+                      {{ form.name(class="form-control") }}
+                    </form>
+              </th>
+              {% else %}
+              <td><a href="{{ url_for('codetemplate.template', id=template.id) }}">{{ template.name }}</a></td>
+              {% endif %}
+          <td>
+              {% if template.id == selected_template.id %}
+              <button type="submit" form="template_form" class="btn btn-link"><i class="fa-solid fa-thumbs-up"></i></button>
+              <a href="{{ url_for('codetemplate.index', project_id=project.id) }}">
+                  <button type="button" class="btn btn-link"><i class="fa-solid fa-xmark"></i></button>
+              </a>
+              {% elif form == None %}
+              <a href="{{ url_for('codetemplate.edit', id=template.id) }}"><i class="fa-solid fa-pen-to-square p-2"></i></a>
+              <a href="{{ url_for('codetemplate.delete', id=template.id) }}"><i class="fa-sharp fa-solid fa-trash p-2"></i></a>
+              {% endif %}
+          </td>
+        </tr>
+          {% endfor %}
+      </tbody>
+    </table>
+</div>
+{% endblock %}

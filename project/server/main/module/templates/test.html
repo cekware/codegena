@@ -1,0 +1,45 @@
+{{result}}
+
+<br/>
+<br/>
+
+
+
+{% for key, value in specification.schemas.items() %}
+    {{ key }}
+    <br/>
+    <br/>
+    {% for prop in value.properties %}
+    {{ prop }}
+    <br/>
+    {% endfor %}
+    <br/>
+{% endfor %}
+
+<br/>
+<br/>
+{% for path in specification.paths %}
+    {{ path.url }}
+    <br/>
+    <br/>
+    {% for operation in path.operations %}
+        {{ operation.method }}
+        {{ operation.operationId }}
+        {{ operation.description }}
+        
+        <br/>
+        {% for response in operation.responses %}
+            {% if response.content != None %}
+            {% for type in response.content %}
+            title: {{ type.schema }}
+            <br/>
+            {% endfor %}
+              
+            {% endif %}
+            <br/>
+        {% endfor %}
+        
+        <br/>
+    {% endfor %}
+    <br/>
+{% endfor %}

@@ -1,0 +1,40 @@
+{% extends "_base.html" %}
+{% from 'bootstrap4/form.html' import render_form_row %}
+{% from 'bootstrap4/form.html' import render_field %}
+{% from 'bootstrap4/table.html' import render_table %}
+{% from 'bootstrap4/nav.html' import render_breadcrumb_item %}
+
+{% block nav%}
+{{ render_breadcrumb_item('main.dashboard', 'Installations') }}
+{{ render_breadcrumb_item('main.installation', 'Projects', installation_id=project.installation.id) }}
+{{ render_breadcrumb_item('project.modules', project.name, project_id=project.id) }}
+{% endblock %}
+
+{% block content %}
+<div class="d-grid gap-5">    
+    <ul class="nav nav-pills">
+        <li class="nav-item">
+            <a class="nav-link active" aria-current="page" href="{{ url_for('module.states', project_id=project.id, module_id=module_id) }}">
+                States
+            </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="{{ url_for('module.actions', project_id=project.id, module_id=module_id) }}">
+                Actions
+            </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="{{ url_for('module.index', project_id=project.id, module_id=module_id) }}">
+                Info
+            </a>
+        </li>
+    </ul>
+</div>
+<div>
+    {{ render_table(data, titles, show_actions=True, model=model, table_classes="table table-striped",
+        new_url=url_for('state.add', project_id=project.id, module_id=module_id),
+        view_url=('state.index', [('state_id', ':id')]),
+        delete_url=('state.delete', [('state_id', ':id')])
+        ) }}
+</div>
+{% endblock %}

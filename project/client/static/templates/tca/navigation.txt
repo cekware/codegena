@@ -1,0 +1,16 @@
+{% for import in module.project.imports %}import {{ import.name }}
+{% endfor %}
+
+public struct {{ module.name }}: Reducer {
+
+    public enum State: Equatable {
+        {% for state in module.states %}{{ state.as_swift_navigation_state_repr() }}
+        {% endfor %}
+    }
+
+    {% include 'action.txt' %}
+
+    public var body: some ReducerOf<Self> {
+        {{ module.as_navigation_submodules() }}
+    }   
+}

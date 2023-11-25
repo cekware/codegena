@@ -1,0 +1,21 @@
+{% extends "_base.html" %}
+{% from 'bootstrap4/nav.html' import render_breadcrumb_item %}
+
+{% block nav%}
+{{ render_breadcrumb_item('main.home', 'Home') }}
+{% if current_user.is_anonymous %}
+<li class="" style="margin-left: auto; margin-right:0;"><a href="{{ url_for('main.registro') }}"><i class="fa-brands fa-github-square p-2 text-dark"></i>Sign in with GitHub</a></a>
+{% else %}
+<li class="" style="margin-left: auto; margin-right:0;"><a href="{{ url_for('main.logout') }}">Logout</a></a>
+{% endif %}
+{% endblock %}
+
+{% block content %}
+<h1>Welcome</h1>
+<p>
+    Code as data. You can create, edit and save your most used models and actions and generate source code from your templates.
+    <br/>
+    Authenticate button is right up top!
+</p>
+{% endblock %}
+

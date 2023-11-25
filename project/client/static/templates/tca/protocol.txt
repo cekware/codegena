@@ -1,0 +1,4 @@
+public protocol {{ module.name }}Receiver {
+    {% for action in module.actions %}{{ action.swift_tca_func_definition_repr() }} -> Effect<{{module.name}}.Action>
+    {% endfor %}
+}

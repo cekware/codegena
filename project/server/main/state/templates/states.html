@@ -1,0 +1,102 @@
+{% extends "_base.html" %}
+{% from 'bootstrap4/nav.html' import render_breadcrumb_item %}
+{% from 'bootstrap4/table.html' import render_table %}
+
+{% block nav%}
+{{ render_breadcrumb_item('project.index',"Projects") }}
+{{ render_breadcrumb_item('project.project',project.name, id=project.id) }}
+{{ render_breadcrumb_item('module.index', "Modules", project_id=project.id) }}
+{{ render_breadcrumb_item('module.module', module.name, id=module.id) }}
+{{ render_breadcrumb_item('state.index', "States", module_id=module.id) }}
+{% if current_user.is_anonymous %}
+<li class="" style="margin-left: auto; margin-right:0;"><a href="{{ url_for('main.registro') }}">Logout</a></a>
+{% else %}
+<li class="" style="margin-left: auto; margin-right:0;"><a href="{{ url_for('main.logout') }}">Logout</a></a>
+{% endif %}
+{% endblock %}
+{% block content %}
+<div>
+  <ul class="nav nav-tabs">
+      <li class="nav-item">
+        <a class="nav-link active" href="{{ url_for('state.index', module_id=module.id) }}">States</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="{{ url_for('action.index', module_id=module.id) }}">Actions</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="{{ url_for('submodule.index', module_id=module.id) }}">Submodules</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="{{ url_for('moduleimport.index', module_id=module.id) }}">Imports</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="{{ url_for('module.module', id=module.id) }}">Info</a>
+      </li>
+    </ul>
+  </div>
+
+<div>
+  <table class="table table table-hover">
+      <thead>
+        <tr>
+          <th scope="col"><a class="" href="{{ url_for('state.add', module_id=module.id) }}"><i class="fa-sharp fa-regular fa-plus p-2"></i></a></th>
+          <th scope="col">Attribute</th>
+          <th scope="col">Access Control</th>
+          <th scope="col">Mutability</th>
+          <th scope="col">Array</th>
+          <th scope="col">Optional</th>
+          <th scope="col">Default</th>
+          <th scope="col">Type</th>
+          <th scope="col">Generic Of</th>
+          <th scope="col">Optional Generic</th>
+          <th scope="col">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+          {% for state in data %}
+          <tr>
+              {% if form != None and state.id == selected_state.id %}
+              <form id="state_form" method="post">
+                {% if 'csrf_token' in form %}
+                {{ form.csrf_token() }}
+                {% endif %}
+              </form>
+              <td>{{ form.name(class="form-control", form="state_form") }}</td>
+              <td>{{ form.attribute(class="form-control", form="state_form") }}</td>
+              <td>{{ form.access_control(class="form-control", form="state_form") }}</td>
+              <td>{{ form.is_mutable(form="state_form") }}</td>
+              <td>{{ form.is_array(form="state_form") }}</td>
+              <td>{{ form.is_optional(form="state_form") }}</td>
+              <td>{{ form.default_value(class="form-control", form="state_form") }}</td>
+              <td>{{ form.type(class="form-control", form="state_form") }}</td>
+              <td>{{ form.generic_of(class="form-control", form="state_form") }}</td>
+              <td>{{ form.is_optional_generic(form="state_form") }}</td>
+              {% else %}
+                <td scope="row">{{ state.name }}</td>
+                <td >{{ state.attribute }}</td>
+                <td >{{ state.access_control }}</td>
+                <td >{{ state.is_mutable }}</td>
+                <td >{{ state.is_array }}</td>
+                <td >{{ state.is_optional }}</td>
+                <td >{{ state.default_value }}</td>
+                <td >{{ state.type }}</td>
+                <td >{{ state.generic_of }}</td>
+                <td >{{ state.is_optional_generic }}</td>
+              {% endif %}
+          <td>
+              {% if state.id == selected_state.id %}
+                <button type="submit" form="state_form" class="btn btn-link"><i class="fa-solid fa-thumbs-up"></i></button>
+                <a href="{{ url_for('state.index', module_id=module.id) }}">
+                    <button type="button" class="btn btn-link"><i class="fa-solid fa-xmark"></i></button>
+              </a>
+              {% elif form == None %}
+                <a href="{{ url_for('state.edit', id=state.id) }}"><i class="fa-solid fa-pen-to-square p-2"></i></a>
+                <a href="{{ url_for('state.delete', id=state.id) }}"><i class="fa-sharp fa-solid fa-trash p-2"></i></a>
+              {% endif %}
+          </td>
+        <tr>
+          {% endfor %}
+      </tbody>
+    </table>
+</div>
+{% endblock %}

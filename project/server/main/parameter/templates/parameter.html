@@ -1,0 +1,86 @@
+{% extends "_base.html" %}
+{% from 'bootstrap4/nav.html' import render_breadcrumb_item %}
+{% from 'bootstrap4/table.html' import render_table %}
+{% from 'bootstrap4/form.html' import render_form_row %}
+{% from 'bootstrap4/form.html' import render_field %}
+
+{% block nav%}
+{{ render_breadcrumb_item('project.index',"Projects") }}
+{{ render_breadcrumb_item('project.project',project.short_name, id=project.id) }}
+{{ render_breadcrumb_item('module.index', "Modules", project_id=project.id) }}
+{{ render_breadcrumb_item('module.module', module.name, id=module.id) }}
+{{ render_breadcrumb_item('action.index', "Actions", module_id=module.id) }}
+{{ render_breadcrumb_item('parameter.index', action.name, action_id=action.id) }}
+{{ render_breadcrumb_item('parameter.index', "Parameters", action_id=action.id) }}
+{{ render_breadcrumb_item('parameter.parameter', parameter.name, action_id=action.id) }}
+{% if current_user.is_anonymous %}
+<li class="" style="margin-left: auto; margin-right:0;"><a href="{{ url_for('main.registro') }}">Logout</a></a>
+{% else %}
+<li class="" style="margin-left: auto; margin-right:0;"><a href="{{ url_for('main.logout') }}">Logout</a></a>
+{% endif %}
+{% endblock %}
+{% block content %}
+
+<div>
+  <form id="parameter_form" method="post">
+    {% if 'csrf_token' in form %}
+    {{ form.csrf_token() }}
+    {% endif %}
+    {{ render_field(form.name) }}
+    {{ render_field(form.type) }}
+    {{ render_field(form.is_optional) }}
+    {{ render_field(form.is_array) }}
+    {{ render_field(form.generic_of) }}
+    {{ render_form_row([form.submit]) }}
+</form>
+</div>
+{% block js%}
+{{ super() }}
+<script>
+  var hasChanges = false
+  window.addEventListener("beforeunload", (event) => {
+    if (!hasChanges) return;
+    event.preventDefault();
+    event.returnValue = "";
+  })
+  var form = document.forms["parameter_form"];
+  var name_input = form.elements["name"];
+  var type_input = form.elements["type"];
+  var optional_input = form.elements["is_optional"];
+  var array_input = form.elements["is_array"];
+  var generic_of_input = form.elements["generic_of"];
+
+  // let elementsArray = document.querySelectorAll("whatever");
+
+  // elementsArray.forEach(function(elem) {
+  //     elem.addEventListener("input", function() {
+  //         // This function does stuff
+  //     });
+  // });
+
+  form.addEventListener('change', () => {
+    hasChanges = true;
+  });
+  name_input.addEventListener('input', () => {
+    hasChanges = true;
+  });
+  type_input.addEventListener('input', () => {
+    hasChanges = true;
+  });
+  optional_input.addEventListener('input', () => {
+    hasChanges = true;
+  });
+  array_input.addEventListener('input', () => {
+    hasChanges = true;
+  });
+  generic_of_input.addEventListener('input', () => {
+    hasChanges = true;
+  });
+
+
+  form.addEventListener('submit', () => {
+    hasChanges = false;
+  })
+</script>
+{% endblock %}
+{% endblock %}

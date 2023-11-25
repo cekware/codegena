@@ -1,0 +1,88 @@
+{% extends "_base.html" %}
+{% from 'bootstrap4/nav.html' import render_breadcrumb_item %}
+{% from 'bootstrap4/table.html' import render_table %}
+{% from 'bootstrap4/form.html' import render_form_row %}
+{% from 'bootstrap4/form.html' import render_field %}
+
+{% block nav%}
+{{ render_breadcrumb_item('project.index',"Projects") }}
+{{ render_breadcrumb_item('project.project',project.name, id=project.id) }}
+{{ render_breadcrumb_item('module.index', "Modules", project_id=project.id) }}
+{{ render_breadcrumb_item('module.module', module.name, id=module.id) }}
+{{ render_breadcrumb_item('action.index', "Actions", module_id=module.id) }}
+{{ render_breadcrumb_item('action.action', action.name, id=action.id) }}
+{{ render_breadcrumb_item('parameter.index', "Parameters", action_id=action.id) }}
+{% if current_user.is_anonymous %}
+<li class="" style="margin-left: auto; margin-right:0;"><a href="{{ url_for('main.registro') }}">Logout</a></a>
+{% else %}
+<li class="" style="margin-left: auto; margin-right:0;"><a href="{{ url_for('main.logout') }}">Logout</a></a>
+{% endif %}
+{% endblock %}
+{% block content %}
+<div>
+<ul class="nav nav-tabs">
+    <li class="nav-item">
+      <a class="nav-link active" href="{{ url_for('parameter.index', action_id=action.id) }}">Parameters</a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link" href="{{ url_for('action.action', id=action.id) }}">Info</a>
+    </li>
+  </ul>
+</div>
+<div>
+  <table class="table table table-hover">
+      <thead>
+        <tr>
+          <th scope="col"><a class="" href="{{ url_for('parameter.add', action_id=action.id) }}"><i class="fa-sharp fa-regular fa-plus p-2"></i></a></th>
+          <th scope="col">Array</th>
+          <th scope="col">Optional</th>
+          <th scope="col">Generic Of</th>
+          <th scope="col">Generic Optional</th>
+          <th scope="col">Default</th>
+          <th scope="col">Type</th>
+          <th scope="col">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+          {% for parameter in data %}
+          <tr>
+              {% if form != None and parameter.id == selected_parameter.id %}
+              <form id="parameter_form" method="post">
+                {% if 'csrf_token' in form %}
+                {{ form.csrf_token() }}
+                {% endif %}
+              </form>
+              <td>{{ form.name(class="form-control", form="parameter_form") }}</td>
+              <td>{{ form.is_array(form="parameter_form") }}</td>
+              <td>{{ form.is_optional(form="parameter_form") }}</td>
+              <td>{{ form.generic_of(class="form-control", form="parameter_form") }}</td>
+              <td>{{ form.is_optional_generic(form="parameter_form") }}</td>
+              <td>{{ form.default_value(class="form-control", form="parameter_form") }}</td>
+              <td>{{ form.type(class="form-control", form="parameter_form") }}</td>
+              {% else %}
+                <td scope="row">{{ parameter.name }}</td>
+                <td >{{ parameter.is_array }}</td>
+                <td >{{ parameter.is_optional }}</td>
+                <td >{{ parameter.generic_of }}</td>
+                <td >{{ parameter.is_optional_generic }}</td>
+                <td >{{ parameter.default_value }}</td>
+                <td >{{ parameter.type }}</td>
+              {% endif %}
+          <td>
+              {% if parameter.id == selected_parameter.id %}
+              <button type="submit" form="parameter_form" class="btn btn-link"><i class="fa-solid fa-thumbs-up"></i></button>
+              <a href="{{ url_for('parameter.index', action_id=action.id) }}">
+                  <button type="button" class="btn btn-link"><i class="fa-solid fa-xmark"></i></button>
+              </a>
+              {% elif form == None %}
+              <a href="{{ url_for('parameter.edit', id=parameter.id) }}"><i class="fa-solid fa-pen-to-square p-2"></i></a>
+              <a href="{{ url_for('parameter.delete', id=parameter.id) }}"><i class="fa-sharp fa-solid fa-trash p-2"></i></a>
+              {% endif %}
+          </td> 
+        <tr>
+          {% endfor %}
+      </tbody>
+    </table>
+</div>
+{% endblock %}
+

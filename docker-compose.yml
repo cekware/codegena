@@ -1,0 +1,53 @@
+version: '3.8'
+
+services:
+  web:
+    build: .
+    image: web
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.codegena.rule=Host(`codegena.cihan.rocks`)"
+      - "traefik.http.routers.codegena.entrypoints=websecure"
+      - "traefik.http.routers.codegena.tls.certresolver=myresolver"
+      - "traefik.docker.network=traefik_net"
+    container_name: web
+    ports:
+      - 5004:5000
+    command: python manage.py run -h 0.0.0.0
+    volumes:
+      - .:/usr/src/app
+      - ${DB_PATH}:/usr/src/app/project/server/db
+    environment:
+      - FLASK_DEBUG=1
+      - GH_CLIENT_ID=${GH_CLIENT_ID}
+      - GH_CLIENT_SECRET=${GH_CLIENT_SECRET}
+      - APP_SETTINGS=project.server.config.DevelopmentConfig
+    depends_on:
+      - redis
+
+  worker:
+    image: web
+    command: python manage.py run_worker
+    volumes:
+      - .:/usr/src/app
+    environment:
+      - APP_SETTINGS=project.server.config.DevelopmentConfig
+    depends_on:
+      - redis
+
+  redis:
+    image: redis:6.2-alpine
+
+  dashboard:
+    build: ./project/dashboard
+    image: dashboard
+    container_name: dashboard
+    ports:
+      - 9181:9181
+    command: rq-dashboard -H redis
+    depends_on:
+      - redis
+networks:
+  default:
+    external:
+      name: traefik_net

@@ -1,0 +1,42 @@
+{% extends "_base.html" %}
+{% from 'bootstrap4/nav.html' import render_breadcrumb_item %}
+
+{% block nav%}
+{{ render_breadcrumb_item('main.home', 'Home') }}
+{% endblock %}
+
+{% block content %}
+
+<div class="starter-template">
+    <h1>Codegena</h1>
+    <hr><br>
+    <div>
+      <a class="navbar-brand" href="{{ url_for('main.registro') }}">BL-U</a>
+      <h3>Tasks</h3>
+      <p>Pick a task length...</p>
+      <div class="btn-group" role="group" aria-label="Basic example">
+        <button type="button" class="btn btn-primary" data-type="1">Short</a>
+        <button type="button" class="btn btn-primary" data-type="2">Medium</a>
+        <button type="button" class="btn btn-primary" data-type="3">Long</a>
+      </div>
+    </div>
+    <br><br>
+    <div>
+      <h3>Task Status</h3>
+      <br>
+      <table class="table">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Status</th>
+            <th>Result</th>
+          </tr>
+        </thead>
+        <tbody id="tasks">
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+{% endblock %}

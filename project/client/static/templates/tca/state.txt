@@ -1,0 +1,17 @@
+public struct State: Equatable {
+        {% for state in module.states %}{{ state.as_swift_state_repr() }}
+        {% endfor %}
+        {% for submodule in module.submodules() %}{{ submodule.as_swift_submodule_repr() }}
+        {% endfor %}
+        public init(
+            {% for state in module.states %}{{ state.as_swift_init_parameter_repr() }}{% if loop.last == False or module.submodules()|length > 0  %},{% endif %}
+            {% endfor %}
+            {% for submodule in module.submodules() %}{{ submodule.as_swift_init_parameter_repr() }}{% if loop.last == False %},{% endif %}
+            {% endfor %}
+        ) {
+            {% for state in module.states %}self.{{ state.name }} = {{ state.name }}
+            {% endfor %}
+            {% for submodule in module.submodules() %}self.{{ submodule.name }} = {{ submodule.name }}
+            {% endfor %}
+        }
+    }

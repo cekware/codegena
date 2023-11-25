@@ -1,0 +1,40 @@
+{% extends "_base.html" %}
+{% from 'bootstrap4/form.html' import render_form_row %}
+{% from 'bootstrap4/form.html' import render_field %}
+
+{% block nav%}
+{{ render_breadcrumb_item('main.dashboard', 'Projects') }}
+{{ render_breadcrumb_item('project.project', project_name, project_id=project_id) }}
+{{ render_breadcrumb_item('module.project_module', module_name, project_id=project_id, module_id=module_id) }}
+{{ render_breadcrumb_item('state.project_module_state', state_name, project_id=project_id, module_id=module_id, state_id=state_id) }}
+{% endblock %}
+
+
+{% block content %}
+<h1>{{ name }}</h1>
+
+<form method="post">
+    {% if 'csrf_token' in form %}
+    {{ form.csrf_token() }}
+    {% endif %}
+    {{ render_field(form.name) }}
+    {{ render_field(form.attribute) }}
+    {{ render_field(form.access_control) }}
+    {{ render_field(form.type) }}
+    {{ render_field(form.isMutable) }}
+    {{ render_field(form.isArray) }}
+    {{ render_field(form.isOptional) }}
+    {{ render_field(form.generic_of) }}
+    {{ render_field(form.default_value) }}
+
+    
+
+    <br />
+    <br />
+    <br />
+    {{ render_form_row([form.submit]) }}
+</form>
+
+{{ source }}
+
+{% endblock %}

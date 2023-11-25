@@ -1,0 +1,6 @@
+public enum Action: Equatable {
+        {% for action in module.actions %}{{ action.swift_enum_repr() }}
+        {% endfor %}
+        {% for submodule in module.submodules() %}{{ submodule.as_swift_tca_submodule_action_repr() }}
+        {% endfor %}
+    }

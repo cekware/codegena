@@ -1,0 +1,25 @@
+{{ module.swift().imports }}
+
+@Observable
+public struct {{ module.name }} {
+
+    public init() {}
+
+    public struct State: Equatable {
+        {% for state in module.swift().states %}{{ state }}
+        {% endfor %}
+
+        public init(
+            {% for state in module.swift().states %}{{ state.name }} = {{ state.type }}{{ state.default_value }}{% if loop.last == False %},{% endif %}
+            {% endfor %}
+        ) {
+            {% for state in module.swift().states %}self.{{ state.name }} = {{ state.name }}
+            {% endfor %}
+        }
+    }
+
+    public enum Action: Equatable {
+        {% for action in module.swift().actions %}case {{ action }}
+        {% endfor %}
+    }
+}

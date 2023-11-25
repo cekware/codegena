@@ -1,0 +1,123 @@
+{% extends "_base.html" %}
+{% from 'bootstrap4/form.html' import render_form_row %}
+{% from 'bootstrap4/form.html' import render_field %}
+
+{% block nav%}
+{{ render_breadcrumb_item('main.dashboard', 'Projects') }}
+{{ render_breadcrumb_item('project.project', project_name, project_id=project_id) }}
+{{ render_breadcrumb_item('module.project_module', module.name, project_id=project_id) }}
+{% endblock %}
+
+{% block content %}
+
+<div class="d-grid gap-5">    
+    <ul class="nav nav-pills">
+        <li class="nav-item">
+            <a class="nav-link active" aria-current="page" href="{{ url_for('project.project', project_id=project.id) }}">
+                Modules
+            </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="{{ url_for('library.index', project_id=project.id) }}">
+                Libraries
+            </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="{{ url_for('project.project', project_id=project.id) }}">
+                Info
+            </a>
+        </li>
+    </ul>
+</div>
+
+
+
+<form method="post">
+    {% if 'csrf_token' in form %}
+    {{ form.csrf_token() }}
+    {% endif %}
+    {{ render_field(form.name) }}
+    {{ render_form_row([form.description]) }}
+
+    <h3>States</h3>
+    <table class="table">
+        <thead>
+            <tr>
+                <th scope="col">
+                    <a href="{{ url_for('state.project_module_add_state', project_id=project_id, module_id=module_id) }}">
+                        <i class="fa-solid fa-plus">Add</i>
+                    </a>
+                </th>
+                <th scope="col">Name</th>
+                <th scope="col">Last Updated</th>
+                <th scope="col">Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for state in module.states %}
+            <tr>
+                <th scope="row">{{ state.id }}</th>
+                <td>
+                    <a href="{{ url_for('state.project_module_state', project_id=project_id, module_id=module_id, state_id=state.id) }}">
+                        <i class="fa-solid fa-plus">
+                            {{ state.as_swift_state_repr() }}
+                        </i>
+                    </a>
+                </td>
+                <td>{{ state.updated_at }}</td>
+                <td>
+                    
+                    <a href="{{ url_for('state.project_module_state_delete', project_id=project_id, module_id=module_id, state_id=state.id) }}">
+                        <i class="fa-solid fa-plus">Delete</i>
+                    </a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <h3>Actions</h3>
+    <table class="table">
+        <thead>
+            <tr>
+                <th scope="col">
+                    <a href="{{ url_for('action.project_module_add_action', project_id=project_id, module_id=module_id) }}">
+                        <i class="fa-solid fa-plus">Add</i>
+                    </a>
+                </th>
+                <th scope="col">Name</th>
+                <th scope="col">Last Updated</th>
+                <th scope="col">Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for action in module.actions %}
+            <tr>
+                <th scope="row">{{ action.id }}</th>
+                <td>
+                    <a href="{{ url_for('action.project_module_action', project_id=project_id, module_id=module_id, action_id=action.id) }}">
+                        <i class="fa-solid fa-plus">
+                            {{ action.swift_enum_repr() }}
+                        </i>
+                    </a>
+                </td>
+                <td>{{ action.updated_at }}</td>
+                <td>
+                    <a href="{{ url_for('action.project_module_action_delete', project_id=project_id, module_id=module_id, action_id=action.id) }}">
+                        <i class="fa-solid fa-plus">Delete</i>
+                    </a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <br />
+    <br />
+    <br />
+    {{ render_form_row([form.submit]) }}
+</form>
+
+{{ source }}
+
+{% endblock %}

@@ -1,0 +1,70 @@
+{% extends "_base.html" %}
+{% from 'bootstrap4/form.html' import render_form_row %}
+{% from 'bootstrap4/form.html' import render_field %}
+{% from 'bootstrap4/nav.html' import render_breadcrumb_item %}
+
+{% block nav%}
+{{ render_breadcrumb_item('main.dashboard', 'Projects') }}
+{{ render_breadcrumb_item('project.project', project_name, project_id=project_id) }}
+{{ render_breadcrumb_item('module.project_module', module_name, project_id=project_id, module_id=module_id) }}
+{{ render_breadcrumb_item('action.project_module_action', action.name, project_id=project_id, module_id=module_id, action_id=action.id) }}
+{% endblock %}
+
+{% block content %}
+<h1>{{ name }}</h1>
+
+{{ action.swift_enum_repr() }}
+<br/>
+
+{{ action.swift_func_definition_repr() }}
+<form method="post">
+    {% if 'csrf_token' in form %}
+    {{ form.csrf_token() }}
+    {% endif %}
+    {{ render_field(form.name) }}
+
+    <h3>Parameters</h3>
+    <table class="table">
+        <thead>
+            <tr>
+                <th scope="col">
+                    <a href="{{ url_for('parameter.project_module_action_add_parameter', project_id=project_id, module_id=module_id, action_id=action.id) }}">
+                        <i class="fa-solid fa-plus">Add</i>
+                    </a>
+                </th>
+                <th scope="col">Name</th>
+                <th scope="col">Last Updated</th>
+                <th scope="col">Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for parameter in action.parameters %}
+            <tr>
+                <th scope="row">{{ parameter.id }}</th>
+                <td>
+                    
+                    <a href="{{ url_for('parameter.project_module_action_parameter', project_id=project_id, module_id=module_id, action_id=action.id, parameter_id=parameter.id) }}">
+                        <i class="fa-solid fa-plus">
+                            {{ parameter.name }}
+                        </i>
+                    </a>
+                </td>
+                <td>{{ parameter.updated_at }}</td>
+                <td>
+                    <a href="{{ url_for('parameter.project_module_action_delete_parameter', project_id=project_id, module_id=module_id, action_id=action.id, parameter_id=parameter.id) }}">
+                        <i class="fa-solid fa-plus">Delete</i>
+                    </a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    <br />
+    <br />
+    <br />
+    {{ render_form_row([form.submit]) }}
+</form>
+
+{{ source }}
+
+{% endblock %}

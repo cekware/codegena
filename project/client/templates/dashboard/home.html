@@ -1,0 +1,30 @@
+{% extends "_base.html" %}
+{% from 'bootstrap4/nav.html' import render_breadcrumb_item %}
+{% from 'bootstrap4/table.html' import render_table %}
+
+{% block nav%}
+{{ render_breadcrumb_item('main.dashboard', 'Installations') }}
+{% endblock %}
+
+{% block content %}
+<div class="d-grid gap-5">    
+    <ul class="nav nav-pills">
+        <li class="nav-item">
+            <a class="nav-link active" aria-current="page" href="{{ url_for('main.dashboard') }}">
+                Installations
+            </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link">
+                Templates
+            </a>
+        </li>
+    </ul>
+</div>
+<div>
+    {{ render_table(data, titles, show_actions=True, model=model, table_classes="table table-striped",
+        view_url=('main.installation', [('installation_id', ":id")]),
+        ) }}
+   
+</div>
+{% endblock %}

@@ -1,0 +1,45 @@
+{% extends "_base.html" %}
+{% from 'bootstrap4/form.html' import render_form_row %}
+{% from 'bootstrap4/form.html' import render_field %}
+{% from 'bootstrap4/nav.html' import render_breadcrumb_item %}
+
+{% block nav%}
+{{ render_breadcrumb_item('main.dashboard', 'Projects') }}
+{{ render_breadcrumb_item('project.project', project_name, project_id=project_id) }}
+{{ render_breadcrumb_item('module.project_module', module_name, project_id=project_id, module_id=module_id) }}
+{{ render_breadcrumb_item('action.project_module_action', action_name, project_id=project_id, module_id=module_id, action_id=action_id) }}
+{{ render_breadcrumb_item('parameter.project_module_action_parameter', parameter.name, project_id=project_id, module_id=module_id, action_id=action_id, parameter_id=parameter.id) }}
+{% endblock %}
+
+{% block content %}
+<h1>{{ name }}</h1>
+
+<form method="post">
+    {% if 'csrf_token' in form %}
+    {{ form.csrf_token() }}
+    {% endif %}
+    {{ render_field(form.name) }}
+    {{ render_field(form.isArray) }}
+    {{ render_field(form.isOptional) }}
+    {{ render_field(form.generic_of) }}
+    {{ render_field(form.default_value) }}
+    {{ render_field(form.type) }}
+    <br />
+    <br />
+    <br />
+    {{ render_form_row([form.submit]) }}
+</form>
+
+{{ source }}
+{% if parameter.next_parameter() %}
+Next parameter:
+{{ parameter.next_parameter().as_function_call_pair() }}
+<br/>
+{% endif %}
+
+{% if parameter.previous_parameter() %}
+Previous parameter:
+{{ parameter.previous_parameter().as_function_call_pair() }}
+{% endif %}
+
+{% endblock %}

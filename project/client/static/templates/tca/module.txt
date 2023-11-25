@@ -1,0 +1,57 @@
+{% for import in module.imports %}import {{ import.name }}
+{% endfor %}
+
+public struct {{ module.name }}: Reducer {
+
+    public init() {}
+
+    public struct State: Equatable {
+        {% for state in module.states %}{{ state.as_swift_state_repr() }}
+        {% endfor %}
+        {{ module.as_swift_submodule_repr() }}
+        public init(
+            {% for state in module.states %}{{ state.as_swift_init_parameter_repr() }}{% if loop.last == False %},{% endif %}
+            {% endfor %}
+            {% for submodule in module.submodules %}{{ submodule.as_swift_init_parameter_repr() }}{% if loop.last == False %},{% endif %}
+            {% endfor %}
+        ) {
+            {% for state in module.states %}self.{{ state.name }} = {{ state.name }}
+            {% endfor %}
+            {% for submodule in module.submodules %}self.{{ submodule.name }} = {{ submodule.name }}
+            {% endfor %}
+        }
+    }
+
+    public enum Action: Equatable {
+        {% for action in module.actions %}{{ action.swift_enum_repr() }}
+        {% endfor %}
+        {% for submodule in module.submodules %}{{ submodule.as_swift_tca_submodule_action_repr() }}
+        {% endfor %}
+    }
+
+    public var body: some ReducerOf<Self> {
+        Reduce { state, action in
+            switch action {
+            {% for action in module.actions %}
+                case .{{ action.name }}{% if action.parameters|length > 0 %}({% endif %}{% for parameter in action.parameters %}let {{ parameter.name }}{% if loop.last == False %}, {% endif %}{% endfor %}{% if action.parameters|length > 0 %}){% endif %}:
+                    return self.{{ action.name }}({% for parameter in action.parameters %}{% if parameter.as_function_call_pair() %}{{ parameter.as_function_call_pair() }}, {% endif %}{% endfor %}state: &state, action: action)
+            {% endfor %}
+            {% for submodule in module.submodules %}
+                {{ submodule.swift_tca_body_case_repr() }}
+            {% endfor %}
+            }
+        }
+        {{ module.submodules_tca_repr() }}
+    }
+
+    {% for action in module.actions %}private {{ action.swift_tca_func_definition_repr() }} {
+        return .none
+    }
+    {% endfor %}
+    {% for submodule in module.submodules %}private {{ submodule.swift_tca_func_definition_repr() }} {
+        return .none
+    }
+    {% endfor %}
+
+}
+

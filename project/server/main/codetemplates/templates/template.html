@@ -1,0 +1,57 @@
+{% extends "_base.html" %}
+{% from 'bootstrap4/nav.html' import render_breadcrumb_item %}
+{% from 'bootstrap4/table.html' import render_table %}
+{% from 'bootstrap4/form.html' import render_form_row %}
+{% from 'bootstrap4/form.html' import render_field %}
+
+{% block nav%}
+<li class="breadcrumb-item"><a href="{{ url_for('project.index') }}">Projects</a></li>
+<li class="breadcrumb-item"><a href="{{ url_for('project.project', id=project.id) }}">{{ project.name }}</a></li>
+{{ render_breadcrumb_item('codetemplate.index', "Templates", project_id=project.id) }}
+{{ render_breadcrumb_item('codetemplate.template', template.name, id=template.id) }}
+{% if current_user.is_anonymous %}
+<li class="" style="margin-left: auto; margin-right:0;"><a href="{{ url_for('main.registro') }}">Logout</a></a>
+{% else %}
+<li class="" style="margin-left: auto; margin-right:0;"><a href="{{ url_for('main.logout') }}">Logout</a></a>
+{% endif %}
+{% endblock %}
+{% block content %}
+<div>
+    <form method="post">
+        {% if 'csrf_token' in form %}
+        {{ form.csrf_token() }}
+        {% endif %}
+        {{ render_field(form.name) }}
+        {{ render_field(form.content, rows=50, id="editor") }}
+        {{ render_form_row([form.submit]) }}
+    </form>
+</div>
+{% endblock %}
+
+{% block js %}
+{{ super() }}
+<script>
+ 
+    var inputField = document.getElementById('editor'); // get textarea object
+    
+        inputField.onkeydown = function(e) { // list for when any key is pressed
+    
+        if (e.keyCode === 9) { // block to catch when tab key is pressed
+            this.setRangeText(
+                '\t',
+                this.selectionStart,
+                this.selectionStart,
+                'end'
+            )
+            return false; //prevent default action
+    
+        }
+        else if (e.keyCode === 27) {
+            this.blur();
+            document.getElementById('submit').focus();
+        }
+    
+    };
+    
+    </script>
+{% endblock %}

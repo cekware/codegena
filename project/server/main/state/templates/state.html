@@ -1,0 +1,38 @@
+{% extends "_base.html" %}
+{% from 'bootstrap4/nav.html' import render_breadcrumb_item %}
+{% from 'bootstrap4/table.html' import render_table %}
+{% from 'bootstrap4/form.html' import render_form_row %}
+{% from 'bootstrap4/form.html' import render_field %}
+
+{% block nav%}
+{{ render_breadcrumb_item('project.index',"Projects") }}
+{{ render_breadcrumb_item('project.project',project.name, id=project.id) }}
+{{ render_breadcrumb_item('module.index', "Modules", project_id=project.id) }}
+{{ render_breadcrumb_item('module.module', module.name, id=module.id) }}
+{{ render_breadcrumb_item('state.index', "States", module_id=module.id) }}
+{{ render_breadcrumb_item('state.state', state.name, id=state.id) }}
+{% if current_user.is_anonymous %}
+<li class="" style="margin-left: auto; margin-right:0;"><a href="{{ url_for('main.registro') }}">Logout</a></a>
+{% else %}
+<li class="" style="margin-left: auto; margin-right:0;"><a href="{{ url_for('main.logout') }}">Logout</a></a>
+{% endif %}
+{% endblock %}
+{% block content %}
+
+<div>
+    <form method="post">
+        {% if 'csrf_token' in form %}
+        {{ form.csrf_token() }}
+        {% endif %}
+        {{ render_field(form.name) }}
+        {{ render_field(form.type) }}
+        {{ render_field(form.is_optional) }}
+        {{ render_field(form.is_array) }}
+        {{ render_field(form.default_value) }}
+        {{ render_field(form.generic_of) }}
+        {{ render_form_row([form.submit]) }}
+    </form>
+</div>
+
+{% endblock %}
+

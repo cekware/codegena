@@ -1,0 +1,79 @@
+{% extends "_base.html" %}
+{% from 'bootstrap4/nav.html' import render_breadcrumb_item %}
+{% from 'bootstrap4/table.html' import render_table %}
+
+{% block nav%}
+{{ render_breadcrumb_item('project.index',"Projects") }}
+{{ render_breadcrumb_item('project.project',project.name, id=project.id) }}
+{{ render_breadcrumb_item('module.index',"Modules", project_id=project.id) }}
+{% if current_user.is_anonymous %}
+<li class="" style="margin-left: auto; margin-right:0;"><a href="{{ url_for('main.registro') }}">Logout</a></a>
+{% else %}
+<li class="" style="margin-left: auto; margin-right:0;"><a href="{{ url_for('main.logout') }}">Logout</a></a>
+{% endif %}
+{% endblock %}
+{% block content %}
+<div>
+<ul class="nav nav-tabs">
+    <li class="nav-item">
+      <a class="nav-link active" href="{{ url_for('module.index', project_id=project.id) }}">Modules</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" href="{{ url_for('codetemplate.index', project_id=project.id) }}">Templates</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" href="{{ url_for('project.project', id=project.id) }}">Info</a>
+    </li>
+  </ul>
+<div>
+<div>
+    <table class="table table table-hover">
+        <thead>
+          <tr>
+            <th scope="col">
+              <div class="dropdown show">
+                <a class="btn btn-link dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                  <i class="fa-sharp fa-regular fa-plus p-2"></i>
+                </a>
+                <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
+                  <a class="dropdown-item" href="{{ url_for('module.add', project_id=project.id) }}"><i class="fa-sharp fa-regular fa-plus p-2"></i>New</a>
+                </div>
+              </div>
+            </th>
+            <th scope="col">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+            {% for module in data %}
+            <tr>
+                {% if form != None and module.id == selected_module.id %}
+                <td scope="row">
+                    <form id="module_form" method="post">
+                        {% if 'csrf_token' in form %}
+                        {{ form.csrf_token() }}
+                        {% endif %}
+                        {{ form.name(class="form-control") }}
+                      </form>
+                </td>
+                {% else %}
+                <td>
+                  <a href="{{ url_for('module.module', id=module.id) }}">{{ module.name }}</a>
+                </td>
+                {% endif %}
+            <td>
+                {% if module.id == selected_module.id %}
+                <button type="submit" form="module_form" class="btn btn-link"><i class="fa-solid fa-thumbs-up"></i></button>
+                <a href="{{ url_for('module.index', project_id=project.id) }}">
+                    <button type="button" class="btn btn-link"><i class="fa-solid fa-xmark"></i></button>
+                </a>
+                {% elif form == None %}
+                <a href="{{ url_for('module.edit', id=module.id) }}"><i class="fa-solid fa-pen-to-square p-2"></i></a>
+                <a href="{{ url_for('module.delete', id=module.id) }}"><i class="fa-sharp fa-solid fa-trash p-2"></i></a>
+                {% endif %}
+            </td> 
+          </tr>
+            {% endfor %}
+        </tbody>
+      </table>
+</div>
+{% endblock %}

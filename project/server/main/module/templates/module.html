@@ -1,0 +1,63 @@
+{% extends "_base.html" %}
+{% from 'bootstrap4/nav.html' import render_breadcrumb_item %}
+{% from 'bootstrap4/table.html' import render_table %}
+
+{% block nav%}
+{{ render_breadcrumb_item('project.index',"Projects") }}
+{{ render_breadcrumb_item('project.project',project.name, id=project.id) }}
+{{ render_breadcrumb_item('module.index',"Modules", project_id=project.id) }}
+{{ render_breadcrumb_item('module.module',module.name, id=module.id) }}
+{% if current_user.is_anonymous %}
+<li class="" style="margin-left: auto; margin-right:0;"><a href="{{ url_for('main.registro') }}">Logout</a></a>
+{% else %}
+<li class="" style="margin-left: auto; margin-right:0;"><a href="{{ url_for('main.logout') }}">Logout</a></a>
+{% endif %}
+{% endblock %}
+{% block content %}
+<div>
+  <ul class="nav nav-tabs">
+      <li class="nav-item">
+        <a class="nav-link" href="{{ url_for('state.index', module_id=module.id) }}">States</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="{{ url_for('action.index', module_id=module.id) }}">Actions</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="{{ url_for('submodule.index', module_id=module.id) }}">Submodules</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="{{ url_for('moduleimport.index', module_id=module.id) }}">Imports</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link active" href="{{ url_for('module.module', id=module.id) }}">Info</a>
+      </li>
+    </ul>
+  </div>
+
+
+  <div class="d-flex justify-content-between">
+    <button id="copy">Copy</button>
+  
+    <div class="d-flex justify-content-between">
+      <form class="form-inline" method="post">
+        
+        {% if 'csrf_token' in form %}
+        {{ form.csrf_token() }}
+        {% endif %}
+        {{ form.templates(class="form-control form-control-sm") }}
+        {{ form.submit(class="form-control form-control-sm") }}
+        
+      </form>
+    </div>
+  </div>
+
+
+
+
+  <pre><code id="code-gen" class="language-swift" style="font-size: 0.775rem;">{{ module.as_swift_repr() }}</code></pre>
+{% endblock %}
+{% block css %}
+<link href="{{url_for('static', filename='prism-vsc-dark-plus.css')}}" rel="stylesheet">
+{% endblock %}
+
+

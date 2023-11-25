@@ -1,0 +1,65 @@
+openapi: 3.0.0
+info:
+  title: Token Registration, Authentication, Post and Draft Management API
+  version: 1.0.0
+paths:
+  # ... existing endpoints ...
+  /posts:
+    get:
+      summary: Get a list of posts
+      parameters:
+        - name: draft
+          in: query
+          description: Filter posts by draft status
+          schema:
+            type: boolean
+        - name: sort
+          in: query
+          description: Sort posts by date
+          schema:
+            type: string
+            enum: [asc, desc]
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Post'
+    # ... existing POST /posts endpoint ...
+  /posts/{postId}/draft:
+    put:
+      summary: Save a post as a draft
+      parameters:
+        - name: postId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Post saved as draft successfully
+        '400':
+          description: Bad request
+        '403':
+          description: Forbidden
+        '404':
+          description: Post not found
+components:
+  schemas:
+    Post:
+      type: object
+      properties:
+        title:
+          type: string
+        content:
+          type: string
+        author:
+          type: string
+        draft:
+          type: boolean
+        date:
+          type: string
+          format: date-time

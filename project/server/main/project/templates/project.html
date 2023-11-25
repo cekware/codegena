@@ -1,0 +1,34 @@
+{% extends "_base.html" %}
+{% from 'bootstrap4/nav.html' import render_breadcrumb_item %}
+{% from 'bootstrap4/table.html' import render_table %}
+
+{% block nav%}
+{{ render_breadcrumb_item('project.index',"Projects") }}
+{{ render_breadcrumb_item('project.project',data.name, id=data.id) }}
+{% if current_user.is_anonymous %}
+<li class="" style="margin-left: auto; margin-right:0;"><a href="{{ url_for('main.registro') }}">Logout</a></a>
+{% else %}
+<li class="" style="margin-left: auto; margin-right:0;"><a href="{{ url_for('main.logout') }}">Logout</a></a>
+{% endif %}
+{% endblock %}
+{% block content %}
+<div>
+  <ul class="nav nav-tabs">
+      <li class="nav-item">
+        <a class="nav-link" href="{{ url_for('module.index', project_id=project.id) }}">Modules</a>
+      </li>
+      <li class="nav-item">
+          <a class="nav-link" href="{{ url_for('codetemplate.index', project_id=project.id) }}">Templates</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link active" href="{{ url_for('project.project', id=project.id) }}">Info</a>
+      </li>
+    </ul>
+  <div>
+</div>
+<form>
+  <div class="form-group">
+    <textarea rows="50" class="form-control" id="exampleFormControlTextarea1" rows="3">{{ project.description }}</textarea>
+  </div>
+</form>
+{% endblock %}

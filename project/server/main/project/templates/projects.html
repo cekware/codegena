@@ -1,0 +1,70 @@
+{% extends "_base.html" %}
+{% from 'bootstrap4/nav.html' import render_breadcrumb_item %}
+{% from 'bootstrap4/table.html' import render_table %}
+{% from 'bootstrap4/form.html' import render_form_row %}
+{% from 'bootstrap4/form.html' import render_field %}
+
+{% block nav%}
+<li class="breadcrumb-item"><a href="{{ url_for('project.index') }}">Projects</a></li>
+{% if current_user.is_anonymous %}
+<li class="" style="margin-left: auto; margin-right:0;"><a href="{{ url_for('main.registro') }}">Logout</a></a>
+{% else %}
+<li class="" style="margin-left: auto; margin-right:0;"><a href="{{ url_for('main.logout') }}">Logout</a></a>
+{% endif %}
+
+{% endblock %}
+
+{% block content %}
+<div>
+    <table class="table table table-hover">
+        <thead>
+          <tr>
+            <th scope="col">
+              <div class="dropdown show">
+                <a class="btn btn-link dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                  <i class="fa-sharp fa-regular fa-plus p-2"></i>
+                </a>
+                <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
+                  <a class="dropdown-item" href="{{ url_for('project.add') }}"><i class="fa-sharp fa-regular fa-plus p-2"></i>New</a>
+                  <a class="dropdown-item" href="{{ url_for('project.addExample') }}"><i class="fa-sharp fa-regular fa-plus p-2"></i>Example Project</a>
+                </div>
+              </div>
+            </th>
+            <th scope="col">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+            {% for project in data %}
+            <tr>
+                {% if form != None and project.id == selected_project.id %}
+                <td scope="row">
+                    <form id="parameter_form" method="post">
+                        {% if 'csrf_token' in form %}
+                        {{ form.csrf_token() }}
+                        {% endif %}
+                        {{ form.name(class="form-control") }}
+                        {% if form.name.errors %}
+                          <span style="color: red; font-size: small;">{% for error in form.name.errors %}{{ error }}{% if not loop.last %}<br />{% endif %}{% endfor %}</span>
+                        {% endif %}
+                      </form>
+                </td>
+                {% else %}
+                <td><a href="{{ url_for('project.project', id=project.id) }}">{{ project.name }}</a></td>
+                {% endif %}
+            <td>
+                {% if project.id == selected_project.id %}
+                <button type="submit" form="parameter_form" class="btn btn-link"><i class="fa-solid fa-thumbs-up"></i></button>
+                <a href="{{ url_for('project.index') }}">
+                    <button type="button" class="btn btn-link"><i class="fa-solid fa-xmark"></i></button>
+                </a>
+                {% elif form == None %}
+                <a href="{{ url_for('project.edit', id=project.id) }}"><i class="fa-solid fa-pen-to-square p-2"></i></a>
+                <a href="{{ url_for('project.delete', id=project.id) }}"><i class="fa-sharp fa-solid fa-trash p-2"></i></a>
+                {% endif %}
+            </td>
+          <tr>
+            {% endfor %}
+        </tbody>
+      </table>
+</div>
+{% endblock %}

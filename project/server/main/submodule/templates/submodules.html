@@ -1,0 +1,107 @@
+{% extends "_base.html" %}
+{% from 'bootstrap4/nav.html' import render_breadcrumb_item %}
+{% from 'bootstrap4/table.html' import render_table %}
+
+{% block nav%}
+{{ render_breadcrumb_item('project.index',"Projects") }}
+{{ render_breadcrumb_item('project.project',project.name, id=project.id) }}
+{{ render_breadcrumb_item('module.index', "Modules", project_id=project.id) }}
+{{ render_breadcrumb_item('module.module', module.name, id=module.id) }}
+{{ render_breadcrumb_item('submodule.index', "Submodules", module_id=module.id) }}
+{% if current_user.is_anonymous %}
+<li class="" style="margin-left: auto; margin-right:0;"><a href="{{ url_for('main.registro') }}">Logout</a></a>
+{% else %}
+<li class="" style="margin-left: auto; margin-right:0;"><a href="{{ url_for('main.logout') }}">Logout</a></a>
+{% endif %}
+{% endblock %}
+{% block content %}
+<div>
+<ul class="nav nav-tabs">
+    <li class="nav-item">
+      <a class="nav-link" href="{{ url_for('state.index', module_id=module.id) }}">States</a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link" href="{{ url_for('action.index', module_id=module.id) }}">Actions</a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link active" href="{{ url_for('submodule.index', module_id=module.id) }}">Submodules</a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link" href="{{ url_for('moduleimport.index', module_id=module.id) }}">Imports</a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link" href="{{ url_for('module.module', id=module.id) }}">Info</a>
+    </li>
+  </ul>
+</div>
+
+<div>
+  <table class="table table table-hover">
+      <thead>
+        <tr>
+          <th scope="col">
+            <div class="dropdown show">
+              <a class="btn btn-link dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <i class="fa-sharp fa-regular fa-plus p-2"></i>
+              </a>
+              <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
+                <a class="dropdown-item" href="{{ url_for('submodule.add', module_id=module.id, type=1) }}"></i>Reference</a>
+                <a class="dropdown-item" href="{{ url_for('submodule.add', module_id=module.id, type=2) }}"></i>List</a>
+                <a class="dropdown-item" href="{{ url_for('submodule.add', module_id=module.id, type=3) }}"></i>Stack</a>
+                <a class="dropdown-item" href="{{ url_for('submodule.add', module_id=module.id, type=4) }}"></i>Presentation</a>
+              </div>
+            </div>
+          </th>
+          <th scope="col">Type</th>
+          <th scope="col">Default</th>
+          <th scope="col">Optional</th>
+          <th scope="col">Presentation Type</th>
+          <th scope="col">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+          {% for submodule in data %}
+          <tr>
+              {% if form != None and submodule.id == selected_submodule.id %}
+              <form id="submodule_form" method="post">
+                {% if 'csrf_token' in form %}
+                {{ form.csrf_token() }}
+                {% endif %}
+              </form>
+                {% if submodule.presentation_type.value == 1 or submodule.presentation_type.value == 2 %}
+                  <td>{{ form.name(class="form-control", form="submodule_form") }}</td>
+                  <td>{{ form.reference(class="form-control", form="submodule_form") }}</td>
+                  <td>{{ form.default_value(class="form-control", form="submodule_form") }}</td>
+                  <td>{{ form.is_optional(form="submodule_form") }}</td>
+                  <td>{{ form.presentation_type(class="form-control", form="submodule_form") }}</td>
+                {% else %}
+                  <td>{{ form.name(class="form-control", form="submodule_form") }}</td>
+                  <td>{{ form.reference(class="form-control", form="submodule_form") }}</td>
+                  <td >{{ submodule.default_value }}</td>
+                  <td >{{ submodule.is_optional }}</td>
+                  <td>{{ form.presentation_type(class="form-control", form="submodule_form") }}</td>
+                {% endif %}
+              {% else %}
+                <td scope="row">{{ submodule.name }}</td>
+                <td >{{ submodule.reference.name }}</td>
+                <td >{{ submodule.default_value }}</td>
+                <td >{{ submodule.is_optional }}</td>
+                <td >{{ submodule.presentation_type }}</td>
+              {% endif %}
+          <td>
+              {% if submodule.id == selected_submodule.id %}
+                <button type="submit" form="submodule_form" class="btn btn-link"><i class="fa-solid fa-thumbs-up"></i></button>
+                <a href="{{ url_for('submodule.index', module_id=module.id) }}">
+                    <button type="button" class="btn btn-link"><i class="fa-solid fa-xmark"></i></button>
+              </a>
+              {% elif form == None %}
+                <a href="{{ url_for('submodule.edit', id=submodule.id) }}"><i class="fa-solid fa-pen-to-square p-2"></i></a>
+                <a href="{{ url_for('submodule.delete', id=submodule.id) }}"><i class="fa-sharp fa-solid fa-trash p-2"></i></a>
+              {% endif %}
+          </td>
+        </tr>
+          {% endfor %}
+      </tbody>
+    </table>
+</div>
+{% endblock %}

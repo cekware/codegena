@@ -100,12 +100,12 @@ public struct AuthModule: Reducer {
     }
 
     public init(
-		password: String = "",
-		username: String = ""
-	) {
-		password = password
-		username = username
-	}
+	password: String = "",
+	username: String = ""
+    ) {
+	password = password
+	username = username
+    }
     public enum Action: Equatable {
         case loginButtonTapped
         case loginResponceReceived(token: TaskResult<String>)

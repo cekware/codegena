@@ -11,3 +11,4 @@ __pycache__
 env.sh
 migrations
 project/server/db/app.db
+logs

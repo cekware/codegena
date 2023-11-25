@@ -1,9 +1,0 @@
-{
-    "[python]": {
-        "editor.defaultFormatter": "ms-python.autopep8"
-    },
-    "python.formatting.provider": "none",
-    "yaml.schemas": {
-        "openapi:v3": "file:///Users/cekisakurek/Repo/flask-redis-queue/project/client/static/templates/oas/example2.yaml"
-    }
-}

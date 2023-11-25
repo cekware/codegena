@@ -12,3 +12,4 @@ env.sh
 migrations
 project/server/db/app.db
 logs
+.vscode

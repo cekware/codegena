@@ -222,7 +222,7 @@ class ModuleProxy:
         self.module_imports=[ 
             ModuleImportProxy(
                 name=i.name, 
-                function_name=i.function,
+                function_name=i.function_name,
                 extra_info=i.extra_info
             ) 
             for i in module_imports

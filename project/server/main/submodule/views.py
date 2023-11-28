@@ -74,7 +74,8 @@ def submodule(id):
 def add(module_id, type):
     module = Module.query.filter_by(id=module_id).first_or_404()
     presentation_type = SubmoduleType(type)
-    submodule = Submodule.new_submodule(module=module,presentation_type=presentation_type)
+
+    submodule = Submodule.new_submodule(module=module,presentation_type=presentation_type, reference=module)
     db.session.add(submodule)
     db.session.commit()
     return redirect(url_for('submodule.index', module_id=module.id))

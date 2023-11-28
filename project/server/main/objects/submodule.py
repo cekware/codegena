@@ -34,7 +34,7 @@ class Submodule(db.Model):
     __table_args__ = (db.UniqueConstraint('module_id', 'name', name='unique_submodule_name_per_module'),)
 
     @classmethod
-    def new_submodule(cls, module, presentation_type):
+    def new_submodule(cls, module, presentation_type, reference):
         name="newSubmodule"
         submodules = Submodule.query.filter(Submodule.module_id == module.id, Submodule.name.like('newSubmodule%')).all()
         if len(submodules) > 0:
@@ -72,7 +72,15 @@ class Submodule(db.Model):
         # with open(data_file, 'r') as file:
         #     data = file.read()
      
-        return Submodule(module=module, name=name, type=type, presentation_type=presentation_type, is_optional=is_optional, default_value=default_value)
+        return Submodule(
+            module=module, 
+            name=name,
+            type=type, 
+            presentation_type=presentation_type, 
+            is_optional=is_optional, 
+            default_value=default_value,
+            reference=reference
+        )
     
 
 

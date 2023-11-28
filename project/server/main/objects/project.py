@@ -119,7 +119,9 @@ class ProjectProxy:
                     ], 
                     module_imports=[ 
                         SwiftModuleImport(
-                            name=i.name
+                            name=i.name,
+                            function_name=i.function,
+                            extra_info=i.extra_info
                         ) 
                         for i in m.module_imports 
                     ]
@@ -170,12 +172,13 @@ class ProjectProxy:
                         name=s.name, 
                         type=s.type, 
                         reference=s.reference, 
-                        extra_info=s.extra_info
+                        extra_info=s.extra_info,
+                        presentation_type=s.presentation_type
                     ) 
                     for s in m.submodules 
                 ], 
                 module_imports=[ 
-                    ModuleImportProxy(name=i.name) 
+                    ModuleImportProxy(name=i.name, function_name=i.function,extra_info=i.extra_info) 
                     for i in m.module_imports
                 ]
             ) 

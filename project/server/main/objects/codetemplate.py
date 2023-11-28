@@ -12,7 +12,7 @@ class CodeTemplate(db.Model):
 
     name = db.Column(db.String(140), nullable=False)
     content = db.Column(db.Text(), nullable=False)
-
+    description = db.Column(db.String(1024))
     __table_args__ = (db.UniqueConstraint('project_id', 'name', name='unique_codetemplate_name_per_project'),)
 
     @classmethod
@@ -68,3 +68,15 @@ class CodeTemplate(db.Model):
         return CodeTemplate(name=name, content=data, project=project)
 
 
+from dataclasses import dataclass
+
+@dataclass
+class CodeTemplateProxy:
+    name: str
+    content: str
+    extra_info = dict
+
+    def __init__(self, name, content, extra_info):
+        self.name = name
+        self.content = content
+        self.extra_info = extra_info

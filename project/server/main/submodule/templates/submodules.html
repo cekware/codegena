@@ -53,8 +53,6 @@
             </div>
           </th>
           <th scope="col">Type</th>
-          <th scope="col">Default</th>
-          <th scope="col">Optional</th>
           <th scope="col">Presentation Type</th>
           <th scope="col">Actions</th>
         </tr>
@@ -71,21 +69,15 @@
                 {% if submodule.presentation_type.value == 1 or submodule.presentation_type.value == 2 %}
                   <td>{{ form.name(class="form-control", form="submodule_form") }}</td>
                   <td>{{ form.reference(class="form-control", form="submodule_form") }}</td>
-                  <td>{{ form.default_value(class="form-control", form="submodule_form") }}</td>
-                  <td>{{ form.is_optional(form="submodule_form") }}</td>
                   <td>{{ form.presentation_type(class="form-control", form="submodule_form") }}</td>
                 {% else %}
                   <td>{{ form.name(class="form-control", form="submodule_form") }}</td>
                   <td>{{ form.reference(class="form-control", form="submodule_form") }}</td>
-                  <td >{{ submodule.default_value }}</td>
-                  <td >{{ submodule.is_optional }}</td>
                   <td>{{ form.presentation_type(class="form-control", form="submodule_form") }}</td>
                 {% endif %}
               {% else %}
-                <td scope="row">{{ submodule.name }}</td>
+                <td><a href="{{ url_for('submodule.submodule', id=submodule.id) }}">{{ submodule.name }}</a></td>
                 <td >{{ submodule.reference.name }}</td>
-                <td >{{ submodule.default_value }}</td>
-                <td >{{ submodule.is_optional }}</td>
                 <td >{{ submodule.presentation_type }}</td>
               {% endif %}
           <td>

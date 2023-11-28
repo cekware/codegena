@@ -11,20 +11,44 @@ class SwiftState:
     is_mutable: bool
     is_optional: bool
     is_generic_optional: bool
-    
+    extra_info: dict
+    description: str
+
+    def __init__(
+        self, 
+        name: str,
+        attribute: str, 
+        simple_type: str,
+        private_default_value: str, 
+        access_control: str, 
+        generic_of: str, 
+        is_mutable: bool, 
+        is_optional: bool,
+        is_generic_optional: bool,
+        extra_info: dict,
+        description: str
+    ):
+        self.name = name
+        self.attribute = attribute
+        self.simple_type = simple_type
+        self.private_default_value = private_default_value
+        self.access_control = access_control
+        self.generic_of = generic_of
+        self.is_mutable = is_mutable
+        self.is_optional = is_optional
+        self.is_generic_optional = is_generic_optional
+        self.extra_info = extra_info
+        self.description = description
+
+
     @property
     def default_value(self):
-        if self.private_default_value is not None:
+        if self.private_default_value is not None and self.private_default_value != "":
             return "{}".format(self.private_default_value)
         else:
             return ""
         
-    @property
-    def equal_default_value(self):
-        if self.private_default_value is not None:
-            return " = {}".format(self.private_default_value)
-        else:
-            return ""
+
 
     @property
     def type(self):
@@ -48,5 +72,5 @@ class SwiftState:
             is_mutable=self.is_mutable == True and "var " or "let ", 
             name=self.name, 
             type=self.type,
-            default_value=self.private_default_value is not None and " = {}".format(self.default_value) or ""
-            )
+            default_value=self.default_value is not "" and " = {}".format(self.default_value) or ""
+        )

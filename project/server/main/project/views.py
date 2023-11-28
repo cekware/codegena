@@ -31,7 +31,7 @@ def project(id):
 @project_blueprint.route("/project/add", methods=["GET"])
 @login_required
 def add():
-    model = Project.new_project()
+    model = Project.new_project(current_user)
     templates = [
         CodeTemplate.new_template(model, name="swift-tca", content_file='../../../client/static/templates/swift/tca/example1.txt'),
         CodeTemplate.new_template(model, name="swift-mvvm", content_file='../../../client/static/templates/swift/mvvm/example1.txt')
@@ -46,7 +46,7 @@ from project.server.main.project.example_project import example_app
 @project_blueprint.route("/project/addExample", methods=["GET"])
 @login_required
 def addExample():
-    model = Project.new_project()
+    model = Project.new_project(current_user)
     example_app(
         project=model,
     )

@@ -34,11 +34,6 @@
       <thead>
         <tr>
           <th scope="col"><a class="" href="{{ url_for('parameter.add', action_id=action.id) }}"><i class="fa-sharp fa-regular fa-plus p-2"></i></a></th>
-          <th scope="col">Array</th>
-          <th scope="col">Optional</th>
-          <th scope="col">Generic Of</th>
-          <th scope="col">Generic Optional</th>
-          <th scope="col">Default</th>
           <th scope="col">Type</th>
           <th scope="col">Actions</th>
         </tr>
@@ -53,20 +48,10 @@
                 {% endif %}
               </form>
               <td>{{ form.name(class="form-control", form="parameter_form") }}</td>
-              <td>{{ form.is_array(form="parameter_form") }}</td>
-              <td>{{ form.is_optional(form="parameter_form") }}</td>
-              <td>{{ form.generic_of(class="form-control", form="parameter_form") }}</td>
-              <td>{{ form.is_optional_generic(form="parameter_form") }}</td>
-              <td>{{ form.default_value(class="form-control", form="parameter_form") }}</td>
               <td>{{ form.type(class="form-control", form="parameter_form") }}</td>
               {% else %}
-                <td scope="row">{{ parameter.name }}</td>
-                <td >{{ parameter.is_array }}</td>
-                <td >{{ parameter.is_optional }}</td>
-                <td >{{ parameter.generic_of }}</td>
-                <td >{{ parameter.is_optional_generic }}</td>
-                <td >{{ parameter.default_value }}</td>
-                <td >{{ parameter.type }}</td>
+                <td><a href="{{ url_for('parameter.parameter', id=parameter.id) }}">{{ parameter.name }}</a></td>
+                <td>{{ parameter.type }}</td>
               {% endif %}
           <td>
               {% if parameter.id == selected_parameter.id %}

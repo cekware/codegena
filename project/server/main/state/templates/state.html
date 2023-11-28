@@ -24,15 +24,39 @@
         {% if 'csrf_token' in form %}
         {{ form.csrf_token() }}
         {% endif %}
-        {{ render_field(form.name) }}
+
+        {{ render_field(form.name, class="form-group") }}
+        {{ render_field(form.access_control) }}
         {{ render_field(form.type) }}
-        {{ render_field(form.is_optional) }}
-        {{ render_field(form.is_array) }}
-        {{ render_field(form.default_value) }}
-        {{ render_field(form.generic_of) }}
+        {{ render_field(form.description) }}
+        {{ render_field(form.is_mutable) }}
+        <br/>
+        <h5>Extras</h5>
+        <a class="" href="{{ url_for('state.add_key_value', id=state.id) }}"><i class="fa-sharp fa-regular fa-plus p-2"></i></a>
+        <hr/>
+        {% for extra in form.extras %} 
+        <div class="row">
+            <div class="col">
+                <label>Key: {{loop.index}}</label>
+            </div>
+            <div class="col">
+                {{ extra.name_field() }}
+            </div>
+            <div class="col">
+                <label>Value: {{loop.index}}</label>
+            </div>
+            <div class="col">
+                {{ extra.value_field() }}
+            </div>
+            <div class="col">
+                <a href="{{ url_for('state.delete_key_value', id=state.id, key=extra.name_field.data) }}"><i class="fa-sharp fa-solid fa-trash p-2"></i></a>
+            </div>
+        </div>
+        <br/>
+        {% endfor %}
+
         {{ render_form_row([form.submit]) }}
     </form>
 </div>
-
 {% endblock %}
 

@@ -11,6 +11,8 @@ class ModuleImport(db.Model):
     created_at = db.Column(db.DateTime, index=True, default=datetime.utcnow)
     updated_at = db.Column(db.DateTime, index=True, default=datetime.utcnow)
 
+    extra_info = db.Column(db.String(2048))
+    description = db.Column(db.String(1024))
     @classmethod
     def new_module_import(cls, module):
         name="NewLibrary"
@@ -30,3 +32,16 @@ class ModuleImport(db.Model):
             name = "{}{}".format(name, max_number)
      
         return ModuleImport(name=name, module=module)
+    
+from dataclasses import dataclass
+
+@dataclass
+class ModuleImportProxy:
+    name: str
+    function_name: str
+    extra_info = dict
+
+    def __init__(self, name, function_name, extra_info):
+        self.name = name
+        self.function_name = function_name
+        self.extra_info = extra_info

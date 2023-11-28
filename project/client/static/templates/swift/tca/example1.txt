@@ -7,7 +7,7 @@ public struct {{ module.name }}: Reducer {
         {% for state in module.swift().states %}{{ state }}
         {% endfor %}
         
-        {{ module.swift().initializer }}
+{{ module.swift().initializer|indent(8, True) }}
         
     }
 
@@ -15,19 +15,7 @@ public struct {{ module.name }}: Reducer {
         {% for action in module.swift().actions %}case {{ action }}
         {% endfor %}
     }
-
-    public var body: some ReducerOf<Self> {
-        Reduce { state, action in
-            switch action {
-            {% for action in module.swift().actions %}
-                case .{{ action.name }}{{ action.parameters_let_case }}:
-                    return self.{{ action.name }}{{ action.parameters_func_call }}
-            {% endfor %}
-            }
-        }
-        {% for submodule in module.swift().submodules %}{{ submodule.scope }}
-        {% endfor %}
-    }
+{{ module.swift().tca().body|indent(8, True) }}
 
     {% for action in module.swift().actions %}{{ action.function_definition }} {
         return .none

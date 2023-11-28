@@ -3,13 +3,13 @@ import re
 from project.server import db
 from project.server.main.objects.enums import SubmoduleType
 
-
 class Submodule(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     created_at = db.Column(db.DateTime, index=True, default=datetime.utcnow)
     updated_at = db.Column(db.DateTime, index=True, default=datetime.utcnow)
     module_id = db.Column(db.Integer, db.ForeignKey('module.id'))
     is_optional = db.Column(db.Boolean, default=False)
+    description = db.Column(db.String(1024))
     # name, type, parent_module_name
 
     # Default
@@ -75,95 +75,5 @@ class Submodule(db.Model):
         return Submodule(module=module, name=name, type=type, presentation_type=presentation_type, is_optional=is_optional, default_value=default_value)
     
 
-    def swift_tca_func_definition_repr(self):
-        if self.presentation_type == SubmoduleType.Default:
-            return "private func {}(action: {}.Action, state: inout {}.State) -> Effect<{}.Action>".format(self.name, self.type,self.module.name, self.module.name)
-        if self.presentation_type == SubmoduleType.List:
-            return "private func {}(id: {}.State.ID, action: {}.Action, state: inout {}.State) -> Effect<{}.Action>".format(self.name, self.type, self.type,self.module.name,self.type)
-        if self.presentation_type == SubmoduleType.Stack:
-            return "private func path(path: StackAction<{}Destination.State, {}Destination.Action>, state: inout {}.State) -> Effect<{}.Action>".format(self.module.name, self.module.name,self.module.name, self.module.name)
-        if self.presentation_type == SubmoduleType.Presentation:            
-            return "private func sheet(action: PresentationAction<{}Sheet.Action>, state: inout {}.State) -> Effect<{}.Action>".format(self.module.name, self.module.name,self.module.name)
 
-    def swift_tca_body_case_repr(self):
-        if self.presentation_type == SubmoduleType.Default:
-            return "case .{}(let action):\n\t\t\t\t\treturn self.{}(action: action, state: &state)".format(self.name,self.name)
-        if self.presentation_type == SubmoduleType.List:
-            return "case .{}(let action):\n\t\t\t\t\treturn self.{}(action: action, state: &state)".format(self.name,self.name)
-        if self.presentation_type == SubmoduleType.Stack:
-            return "case .path(let path):\n\t\t\t\t\treturn self.path(path: path, state: &state)".format(self.name,self.name)
-        if self.presentation_type == SubmoduleType.Presentation:            
-            return "case .sheet(let action):\n\t\t\t\t\treturn self.sheet(action: action, state: &state)".format(self.name,self.name)
 
-    # return self.{{ action.name }}({% for parameter in action.parameters %}{% if parameter.as_function_call_pair() %}{{ parameter.as_function_call_pair() }}, {% endif %}{% endfor %}
-
-    # @PresentationState var destination: AppModuleOverlayDestination.State?
-    # public var path = StackState<TransactionListDestination.State>()
-    def as_swift_submodule_default_repr(self) -> str:
-        if self.presentation_type == SubmoduleType.Default:
-            is_optional = ""
-            default_value = ""
-            if self.is_optional:
-                is_optional = "?"
-            if self.default_value is not None and self.default_value != "":
-                default_value = " = {}".format(self.default_value)
-
-            return "public var {name}: {type}.State {is_optional}{default_value}".format(name=self.name, type=self.type, is_optional=is_optional, default_value=default_value)
-        return ""
-        
-    def as_swift_submodule_list_repr(self) -> str:
-        if self.presentation_type == SubmoduleType.List:
-            return "public var {}: IdentifiedArrayOf<{}.State> = []".format(self.name, self.type)
-        return ""
-        
-    def as_swift_submodule_stack_repr(self) -> str:
-        if self.presentation_type == SubmoduleType.Stack:
-            return "public var path: StackState<{}Destination.State> = .init()".format(self.module.name)
-        return ""
-        
-    def as_swift_submodule_presentation_repr(self) -> str:
-        if self.presentation_type == SubmoduleType.Presentation:            
-            return "@PresentationState public var sheet: {}Sheet.State? = nil".format(self.module.name)
-        return ""
-        
-    # @PresentationState var destination: AppModuleOverlayDestination.State?
-    # public var path = StackState<TransactionListDestination.State>()
-    def as_swift_tca_scopes_repr(self) -> str:
-        if self.presentation_type == SubmoduleType.Default:
-            return "Scope(state: \.{}, action: /Action.{}){{ {}() }}".format(self.name,self.name, self.type)
-        if self.presentation_type == SubmoduleType.List:
-            return ".forEach(\.{}, action: /Action.{}){{ {}() }}".format(self.name,self.name, self.type)
-        if self.presentation_type == SubmoduleType.Stack:
-            return ".forEach(\.path, action: /Action.path){{ {}Destination() }}".format(self.module.name)
-        if self.presentation_type == SubmoduleType.Presentation:            
-            return ".ifLet(\.$sheet, action: /Action.sheet){{ {}Sheet() }}".format(self.module.name)
-  
-    def as_swift_tca_submodule_action_repr(self) -> str:
-        if self.presentation_type == SubmoduleType.Default:
-            return "case {}({}.Action)".format(self.name,self.type)
-        if self.presentation_type == SubmoduleType.List:
-            return "case {}(id: {}.State.ID, action: {}.Action)".format(self.name,self.name,self.type)
-        if self.presentation_type == SubmoduleType.Stack:
-            return "case {}(StackAction<{}Destination.State, {}Destination.Action>)".format("path", self.module.name,self.module.name)
-        if self.presentation_type == SubmoduleType.Presentation:            
-            return "case {}(PresentationAction<{}Sheet.Action>)".format("sheet",self.module.name)
-        
-    # used in action enum call
-    # {name}: {type}
-    # token: TaskResult<String>
-    def as_swift_init_parameter_repr(self):
-
-        if self.presentation_type == SubmoduleType.Default:
-            is_optional = ""
-            default_value = ""
-            if self.is_optional:
-                is_optional = "?"
-            if self.default_value is not None and self.default_value != "":
-                default_value = " = {}".format(self.default_value)
-            return "{name}: {type}.State{is_optional}{default_value}".format(name=self.name, type=self.type, is_optional=is_optional, default_value=default_value)
-        if self.presentation_type == SubmoduleType.List:
-            return "{}: IdentifiedArrayOf<{}.State> = []".format(self.name, self.type)
-        if self.presentation_type == SubmoduleType.Stack:
-            return "path: StackState<{}Destination.State> = .init()".format(self.module.name)
-        if self.presentation_type == SubmoduleType.Presentation:            
-            return "sheet: {}Sheet.State? = nil".format(self.module.name)

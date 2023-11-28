@@ -9,10 +9,9 @@
 {{ render_breadcrumb_item('project.project',project.name, id=project.id) }}
 {{ render_breadcrumb_item('module.index', "Modules", project_id=project.id) }}
 {{ render_breadcrumb_item('module.module', module.name, id=module.id) }}
-{{ render_breadcrumb_item('action.index', "Actions", module_id=module.id) }}
-{{ render_breadcrumb_item('parameter.index', action.name, action_id=action.id) }}
-{{ render_breadcrumb_item('parameter.index', "Parameters", action_id=action.id) }}
-{{ render_breadcrumb_item('parameter.parameter', parameter.name, action_id=action.id) }}
+{{ render_breadcrumb_item('submodule.index', "Submodules", module_id=module.id) }}
+{{ render_breadcrumb_item('submodule.submodule', submodule.name, id=submodule.id) }}
+
 {% if current_user.is_anonymous %}
 <li class="" style="margin-left: auto; margin-right:0;"><a href="{{ url_for('main.registro') }}">Logout</a></a>
 {% else %}
@@ -27,10 +26,10 @@
     {{ form.csrf_token() }}
     {% endif %}
     {{ render_field(form.name) }}
-    {{ render_field(form.type) }}
+    {{ render_field(form.reference) }}
     <br/>
     <h5>Extras</h5>
-    <a class="" href="{{ url_for('parameter.add_key_value', id=parameter.id) }}"><i class="fa-sharp fa-regular fa-plus p-2"></i></a>
+    <a class="" href="{{ url_for('submodule.add_key_value', id=submodule.id) }}"><i class="fa-sharp fa-regular fa-plus p-2"></i></a>
     <hr/>
     {% for extra in form.extras %} 
     <div class="row">
@@ -47,7 +46,7 @@
             {{ extra.value_field() }}
         </div>
         <div class="col">
-            <a href="{{ url_for('parameter.delete_key_value', id=parameter.id, key=extra.name_field.data) }}"><i class="fa-sharp fa-solid fa-trash p-2"></i></a>
+            <a href="{{ url_for('submodule.delete_key_value', id=submodule.id, key=extra.name_field.data) }}"><i class="fa-sharp fa-solid fa-trash p-2"></i></a>
         </div>
     </div>
     <br/>

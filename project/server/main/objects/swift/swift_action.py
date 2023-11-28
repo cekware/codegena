@@ -11,6 +11,7 @@ class SwiftAction:
     name: str
     module_name: str
     parameters: List[SwiftParameter]
+    extra_info: dict
     
     def __repr__(self) -> str:
         # case updateNetworkConnection(status: NWPath.Status)
@@ -49,9 +50,9 @@ class SwiftAction:
     def parameters_func_call(self) -> str:
         names = ["{name}: {name}".format(name=x.name) for x in self.parameters]
         if len(names) == 0:
-            return ""
+            return "{}()".format(self.name)
         result = ", ".join(names)
-        return "({})".format(result)
+        return "{name}({parameters})".format(name=self.name,parameters=result)
     
     @property
     def function_definition(self):
